@@ -7,6 +7,7 @@ import 'data/models/episode.dart';
 import 'data/models/movie_detail.dart';
 import 'data/repositories/movie_repository.dart';
 import 'data/services/api_service.dart';
+
 import 'ui/components/app_bar/custom_app_bar.dart';
 import 'ui/components/sidebar/tv_sidebar_menu.dart';
 import 'ui/features/catalog/catalog_screen.dart';
@@ -17,7 +18,16 @@ import 'ui/features/player/player_screen.dart';
 import 'ui/features/search/search_screen.dart';
 
 void main() {
-  runApp(const PhimFluxApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => BookmarkProvider()),
+        ChangeNotifierProvider(create: (_) => HistoryProvider()),
+      ],
+      child: const PhimFluxApp(),
+    ),
+  );
 }
 
 class PhimFluxApp extends StatelessWidget {
@@ -26,24 +36,21 @@ class PhimFluxApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final apiService = ApiService();
-    final movieRepository = MovieRepository(apiService: apiService);
+    final repository = MovieRepository(apiService: apiService);
 
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => BookmarkProvider()),
-        ChangeNotifierProvider(create: (_) => HistoryProvider()),
-        Provider.value(value: movieRepository),
-      ],
-      child: MaterialApp(
-        title: 'PhimFlux',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          brightness: Brightness.dark,
-          scaffoldBackgroundColor: AppColors.darkBackground,
-          useMaterial3: true,
+    return MaterialApp(
+      title: 'PhimFlux',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        brightness: Brightness.dark,
+        scaffoldBackgroundColor: AppColors.darkBackground,
+        primaryColor: AppColors.primaryFocusGlow,
+        colorScheme: const ColorScheme.dark(
+          primary: AppColors.primaryFocusGlow,
+          surface: AppColors.cardBackground,
         ),
-        home: MainNavigationFrame(repository: movieRepository),
       ),
+      home: MainNavigationFrame(repository: repository),
     );
   }
 }
@@ -118,61 +125,62 @@ class _MainNavigationFrameState extends State<MainNavigationFrame> {
       );
     }
 
-    // 3. Main Navigation Layout with transparent floating top bar
+    // 3. Main Navigation Layout with FocusTraversalGroup for D-Pad focus switching
     return Scaffold(
       backgroundColor: AppColors.darkBackground,
-      body: Row(
-        children: [
-          TvSidebarMenu(
-            selectedIndex: _selectedNavIndex,
-            onItemSelected: (idx) {
-              setState(() => _selectedNavIndex = idx);
-            },
-          ),
-          Expanded(
-            child: Stack(
-              children: [
-                Positioned.fill(
-                  child: IndexedStack(
-                    index: _selectedNavIndex,
-                    children: [
-                      HomeScreen(
-                        repository: widget.repository,
-                        onMovieSelect: (movie) => _openMovieDetail(movie.slug),
-                      ),
-                      CatalogScreen(
-                        repository: widget.repository,
-                        onMovieSelect: (movie) => _openMovieDetail(movie.slug),
-                      ),
-                      const LibraryScreen(),
-                      SearchScreen(
-                        repository: widget.repository,
-                        initialQuery: _searchQuery,
-                        onMovieSelect: (movie) => _openMovieDetail(movie.slug),
-                      ),
-                    ],
+      body: FocusTraversalGroup(
+        policy: WidgetOrderTraversalPolicy(),
+        child: Row(
+          children: [
+            TvSidebarMenu(
+              selectedIndex: _selectedNavIndex,
+              onItemSelected: (idx) {
+                setState(() => _selectedNavIndex = idx);
+              },
+            ),
+            Expanded(
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: IndexedStack(
+                      index: _selectedNavIndex,
+                      children: [
+                        HomeScreen(
+                          repository: widget.repository,
+                          onMovieSelect: (movie) => _openMovieDetail(movie.slug),
+                        ),
+                        CatalogScreen(
+                          repository: widget.repository,
+                          onMovieSelect: (movie) => _openMovieDetail(movie.slug),
+                        ),
+                        const LibraryScreen(),
+                        SearchScreen(
+                          repository: widget.repository,
+                          initialQuery: _searchQuery,
+                          onMovieSelect: (movie) => _openMovieDetail(movie.slug),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  child: CustomAppBar(
-                    title: 'PhimFlux',
-                    onSearchSubmit: (query) {
-                      if (query.trim().isNotEmpty) {
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    child: CustomAppBar(
+                      title: 'PhimFlux',
+                      onSearchSubmit: (query) {
                         setState(() {
                           _searchQuery = query;
                           _selectedNavIndex = 3;
                         });
-                      }
-                    },
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

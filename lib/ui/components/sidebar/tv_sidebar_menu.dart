@@ -32,7 +32,7 @@ class _TvSidebarMenuState extends State<TvSidebarMenu> {
     return MouseRegion(
       onEnter: (_) => setState(() => _isExpanded = true),
       onExit: (_) => setState(() => _isExpanded = false),
-      child: FocusScope(
+      child: Focus(
         onFocusChange: (focused) {
           setState(() => _isExpanded = focused);
         },
