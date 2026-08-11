@@ -50,13 +50,15 @@ class _TvFocusableWrapperState extends State<TvFocusableWrapper> {
   void _onFocusListener() {
     if (_focusNode.hasFocus != _isFocused) {
       setState(() => _isFocused = _focusNode.hasFocus);
-      if (_focusNode.hasFocus) {
-        Scrollable.ensureVisible(
-          context,
-          alignment: 0.2,
-          duration: const Duration(milliseconds: 250),
-          curve: Curves.easeInOut,
-        );
+      if (_focusNode.hasFocus && mounted) {
+        try {
+          Scrollable.ensureVisible(
+            context,
+            alignment: 0.2,
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeInOut,
+          );
+        } catch (_) {}
       }
       if (widget.onFocusChanged != null) {
         widget.onFocusChanged!(_focusNode.hasFocus);

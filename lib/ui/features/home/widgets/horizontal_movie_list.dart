@@ -25,33 +25,36 @@ class HorizontalMovieList extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         HorizontalSectionHeader(title: title),
-        SizedBox(
-          height: 290,
-          child: isLoading
-              ? ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  itemCount: 5,
-                  separatorBuilder: (_, __) => const SizedBox(width: 12),
-                  itemBuilder: (_, __) => const SkeletonCard(),
-                )
-              : ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  itemCount: movies.length,
-                  separatorBuilder: (_, __) => const SizedBox(width: 12),
-                  itemBuilder: (context, index) {
-                    final movie = movies[index];
-                    return FocusableMovieCard(
-                      width: 140,
-                      title: movie.name,
-                      imageUrl: movie.thumbUrl,
-                      quality: movie.quality,
-                      language: movie.language,
-                      onTap: () => onMovieTap(movie),
-                    );
-                  },
-                ),
+        FocusTraversalGroup(
+          policy: WidgetOrderTraversalPolicy(),
+          child: SizedBox(
+            height: 290,
+            child: isLoading
+                ? ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: 5,
+                    separatorBuilder: (_, __) => const SizedBox(width: 12),
+                    itemBuilder: (_, __) => const SkeletonCard(),
+                  )
+                : ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    itemCount: movies.length,
+                    separatorBuilder: (_, __) => const SizedBox(width: 12),
+                    itemBuilder: (context, index) {
+                      final movie = movies[index];
+                      return FocusableMovieCard(
+                        width: 140,
+                        title: movie.name,
+                        imageUrl: movie.thumbUrl,
+                        quality: movie.quality,
+                        language: movie.language,
+                        onTap: () => onMovieTap(movie),
+                      );
+                    },
+                  ),
+          ),
         ),
       ],
     );

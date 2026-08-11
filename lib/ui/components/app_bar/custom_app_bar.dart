@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../core_widgets/focus/tv_focusable_wrapper.dart';
 
-/// Top application bar displaying Brand Logo asset & search bar
-class CustomAppBar extends StatefulWidget {
+/// Top application bar displaying Brand Logo asset & TV-friendly Search button
+class CustomAppBar extends StatelessWidget {
   final String title;
   final ValueChanged<String>? onSearchSubmit;
 
@@ -11,19 +12,6 @@ class CustomAppBar extends StatefulWidget {
     required this.title,
     this.onSearchSubmit,
   });
-
-  @override
-  State<CustomAppBar> createState() => _CustomAppBarState();
-}
-
-class _CustomAppBarState extends State<CustomAppBar> {
-  final TextEditingController _searchController = TextEditingController();
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +41,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   const Icon(Icons.play_circle_fill_rounded, color: AppColors.primaryFocusGlow, size: 28),
                   const SizedBox(width: 8),
                   Text(
-                    widget.title,
+                    title,
                     style: const TextStyle(
                       color: AppColors.textPrimary,
                       fontSize: 22,
@@ -65,25 +53,26 @@ class _CustomAppBarState extends State<CustomAppBar> {
               ),
             ),
           ),
-          if (widget.onSearchSubmit != null)
-            SizedBox(
-              width: 240,
-              height: 38,
-              child: TextField(
-                controller: _searchController,
-                onSubmitted: widget.onSearchSubmit,
-                style: const TextStyle(color: Colors.white, fontSize: 13),
-                decoration: InputDecoration(
-                  hintText: 'Tìm phim...',
-                  hintStyle: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
-                  prefixIcon: const Icon(Icons.search_rounded, color: AppColors.primaryFocusGlow, size: 18),
-                  filled: true,
-                  fillColor: AppColors.cardBackground.withOpacity(0.8),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: BorderSide.none,
-                  ),
+          if (onSearchSubmit != null)
+            TvFocusableWrapper(
+              onTap: () => onSearchSubmit!(''),
+              borderRadius: 20,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                decoration: BoxDecoration(
+                  color: AppColors.cardBackground.withOpacity(0.8),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.search_rounded, color: AppColors.primaryFocusGlow, size: 18),
+                    SizedBox(width: 8),
+                    Text(
+                      'Tìm kiếm phim...',
+                      style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                    ),
+                  ],
                 ),
               ),
             ),
