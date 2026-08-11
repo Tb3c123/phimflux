@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 
-/// Top application bar with transparent gradient background
+/// Top application bar displaying Brand Logo asset & search bar
 class CustomAppBar extends StatefulWidget {
   final String title;
   final ValueChanged<String>? onSearchSubmit;
@@ -28,7 +28,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
@@ -42,20 +42,28 @@ class _CustomAppBarState extends State<CustomAppBar> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            children: [
-              const Icon(Icons.play_circle_fill_rounded, color: AppColors.primaryFocusGlow, size: 28),
-              const SizedBox(width: 8),
-              Text(
-                widget.title,
-                style: const TextStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 0.5,
-                ),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.asset(
+              'assets/images/brand_logo.jpg',
+              height: 40,
+              fit: BoxFit.contain,
+              errorBuilder: (_, __, ___) => Row(
+                children: [
+                  const Icon(Icons.play_circle_fill_rounded, color: AppColors.primaryFocusGlow, size: 28),
+                  const SizedBox(width: 8),
+                  Text(
+                    widget.title,
+                    style: const TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
           if (widget.onSearchSubmit != null)
             SizedBox(

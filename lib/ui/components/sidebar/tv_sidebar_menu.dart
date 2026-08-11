@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import 'tv_sidebar_item.dart';
 
-/// Expandable Smart TV Navigation Sidebar Menu
+/// Expandable Smart TV Navigation Sidebar Menu with App Icon asset
 class TvSidebarMenu extends StatefulWidget {
   final int selectedIndex;
   final ValueChanged<int> onItemSelected;
@@ -46,12 +46,25 @@ class _TvSidebarMenuState extends State<TvSidebarMenu> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 14),
                 child: Row(
                   children: [
-                    const Icon(Icons.play_circle_fill_rounded, color: AppColors.primaryFocusGlow, size: 32),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.asset(
+                        'assets/images/app_icon.jpg',
+                        width: 36,
+                        height: 36,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => const Icon(
+                          Icons.play_circle_fill_rounded,
+                          color: AppColors.primaryFocusGlow,
+                          size: 32,
+                        ),
+                      ),
+                    ),
                     if (_isExpanded) ...[
-                      const SizedBox(width: 12),
+                      const SizedBox(width: 10),
                       const Expanded(
                         child: Text(
                           'PhimFlux',
