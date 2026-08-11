@@ -5,7 +5,7 @@ import '../../../../data/models/movie_summary.dart';
 import 'hero_backdrop_image.dart';
 import 'hero_title_info.dart';
 
-/// Interactive Multi-Movie Hero Banner Slider optimized for Smart TV & Mobile
+/// Interactive Multi-Movie Hero Banner Slider optimized for Smart TV & Mobile (No PageView focus trap)
 class HeroBannerSlider extends StatefulWidget {
   final List<MovieSummary> movies;
   final ValueChanged<MovieSummary> onMovieTap;
@@ -21,14 +21,12 @@ class HeroBannerSlider extends StatefulWidget {
 }
 
 class _HeroBannerSliderState extends State<HeroBannerSlider> {
-  late final PageController _pageController;
   int _currentPage = 0;
   Timer? _autoSlideTimer;
 
   @override
   void initState() {
     super.initState();
-    _pageController = PageController();
     _startAutoSlide();
   }
 
@@ -36,39 +34,32 @@ class _HeroBannerSliderState extends State<HeroBannerSlider> {
     _autoSlideTimer?.cancel();
     _autoSlideTimer = Timer.periodic(const Duration(seconds: 5), (_) {
       if (widget.movies.isEmpty || !mounted) return;
-      final nextPage = (_currentPage + 1) % widget.movies.length;
-      _pageController.animateToPage(
-        nextPage,
-        duration: const Duration(milliseconds: 600),
-        curve: Curves.easeInOutCubic,
-      );
+      setState(() {
+        _currentPage = (_currentPage + 1) % widget.movies.length;
+      });
     });
   }
 
   @override
   void dispose() {
     _autoSlideTimer?.cancel();
-    _pageController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     if (widget.movies.isEmpty) return const SizedBox.shrink();
+    final movie = widget.movies[_currentPage.clamp(0, widget.movies.length - 1)];
 
     return SizedBox(
       height: 360,
       child: Stack(
         children: [
-          PageView.builder(
-            controller: _pageController,
-            onPageChanged: (idx) {
-              setState(() => _currentPage = idx);
-            },
-            itemCount: widget.movies.length,
-            itemBuilder: (context, index) {
-              final movie = widget.movies[index];
-              return Stack(
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 600),
+            child: KeyedSubtree(
+              key: ValueKey<String>(movie.slug),
+              child: Stack(
                 children: [
                   HeroBackdropImage(imageUrl: movie.posterUrl),
                   Positioned(
@@ -84,8 +75,8 @@ class _HeroBannerSliderState extends State<HeroBannerSlider> {
                     ),
                   ),
                 ],
-              );
-            },
+              ),
+            ),
           ),
           // Page Indicator Dots
           Positioned(
@@ -94,16 +85,19 @@ class _HeroBannerSliderState extends State<HeroBannerSlider> {
             child: Row(
               children: List.generate(
                 widget.movies.length,
-                (index) => AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  width: _currentPage == index ? 24 : 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: _currentPage == index
-                        ? AppColors.primaryFocusGlow
-                        : Colors.white.withOpacity(0.4),
-                    borderRadius: BorderRadius.circular(4),
+                (index) => GestureDetector(
+                  onTap: () => setState(() => _currentPage = index),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    width: _currentPage == index ? 24 : 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: _currentPage == index
+                          ? AppColors.primaryFocusGlow
+                          : Colors.white.withOpacity(0.4),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
                   ),
                 ),
               ),
