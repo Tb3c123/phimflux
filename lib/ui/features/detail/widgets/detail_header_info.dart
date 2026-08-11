@@ -14,6 +14,7 @@ class DetailHeaderInfo extends StatelessWidget {
   final VoidCallback onPlayFirstEpisode;
   final VoidCallback onBookmarkTap;
   final bool isBookmarked;
+  final FocusNode? playButtonFocusNode;
 
   const DetailHeaderInfo({
     super.key,
@@ -21,6 +22,7 @@ class DetailHeaderInfo extends StatelessWidget {
     required this.onPlayFirstEpisode,
     required this.onBookmarkTap,
     required this.isBookmarked,
+    this.playButtonFocusNode,
   });
 
   @override
@@ -109,6 +111,7 @@ class DetailHeaderInfo extends StatelessWidget {
                   onTap: onPlayFirstEpisode,
                   label: 'XEM TẬP 1',
                   autoFocus: true,
+                  focusNode: playButtonFocusNode,
                 ),
                 const SizedBox(width: 12),
                 SecondaryActionButton(

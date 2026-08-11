@@ -48,7 +48,6 @@ class _HomeScreenState extends State<HomeScreen> {
       allFetched.addAll(list);
     }
 
-    // Unique map by slug
     final Map<String, MovieSummary> uniqueMap = {};
     for (var m in allFetched) {
       uniqueMap[m.slug] = m;
@@ -56,11 +55,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
     final pool = uniqueMap.values.toList()..shuffle();
 
-    // 1. Pick 5 random unique movies for Hero Banner Slider
     final bannerList = pool.take(5).toList();
     final usedSlugs = bannerList.map((m) => m.slug).toSet();
 
-    // 2. Remaining pool for other sections (strictly non-overlapping)
     final remainingPool = pool.where((m) => !usedSlugs.contains(m.slug)).toList();
 
     final latestList = <MovieSummary>[];

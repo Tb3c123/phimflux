@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../data/models/episode.dart';
 import '../../../data/models/movie_detail.dart';
 import '../../../data/models/movie_summary.dart';
 import '../../../data/repositories/movie_repository.dart';
@@ -9,11 +8,11 @@ import '../home/widgets/horizontal_movie_list.dart';
 import 'widgets/detail_header_info.dart';
 import 'widgets/episode_grid_section.dart';
 
-/// Full Movie Detail screen with transparent top bar, OMDb metadata & genre-based movie recommendations
+/// Fullscreen Movie Detail Screen with IMDb metadata & recommended movies
 class DetailScreen extends StatefulWidget {
   final String movieSlug;
   final MovieRepository repository;
-  final Function(MovieDetail detail, Episode episode) onPlayEpisode;
+  final Function(MovieDetail detail, dynamic episode) onPlayEpisode;
   final ValueChanged<String> onMovieSelect;
   final VoidCallback onBack;
 
@@ -38,6 +37,7 @@ class _DetailScreenState extends State<DetailScreen> {
   int _selectedServerIndex = 0;
   int _selectedEpisodeIndex = 0;
   bool _isBookmarked = false;
+  final FocusNode _playButtonFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -46,7 +46,13 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   @override
-  void didUpdateWidget(covariant DetailScreen oldWidget) {
+  void dispose() {
+    _playButtonFocusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(DetailScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.movieSlug != widget.movieSlug) {
       _fetchDetail();
@@ -64,6 +70,13 @@ class _DetailScreenState extends State<DetailScreen> {
       setState(() {
         _movieDetail = detail;
         _isLoading = false;
+      });
+
+      // Automatically request focus on XEM TẬP 1 button when Detail Screen loads
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _playButtonFocusNode.canRequestFocus) {
+          _playButtonFocusNode.requestFocus();
+        }
       });
 
       if (detail != null) {
@@ -106,28 +119,22 @@ class _DetailScreenState extends State<DetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final genreLabel = (_movieDetail?.genres.isNotEmpty ?? false)
-        ? _movieDetail!.genres.first
-        : '';
-    final recommendationTitle = genreLabel.isNotEmpty
-        ? '🎬 Phim Cùng Thể Loại ($genreLabel)'
-        : '🎬 Phim Đề Xuất Tương Tự';
+    final recommendationTitle = _movieDetail != null && _movieDetail!.genres.isNotEmpty
+        ? '🔥 Phim Thể Loại ${_movieDetail!.genres.first} Đề Xuất'
+        : '🔥 Phim Đề Xuất Cùng Thể Loại';
 
     return Scaffold(
       backgroundColor: AppColors.darkBackground,
-      extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: CircleAvatar(
-            backgroundColor: Colors.black.withOpacity(0.6),
-            child: IconButton(
-              icon: const Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary, size: 20),
-              onPressed: widget.onBack,
-            ),
-          ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+          onPressed: widget.onBack,
+        ),
+        title: Text(
+          _movieDetail?.name ?? 'Chi Tiết Phim',
+          style: const TextStyle(color: Colors.white, fontSize: 18),
         ),
       ),
       body: _isLoading
@@ -136,7 +143,7 @@ class _DetailScreenState extends State<DetailScreen> {
             )
           : _movieDetail == null
               ? const Center(
-                  child: Text('Không thể tải thông tin phim',
+                  child: Text('Không tìm thấy chi tiết phim',
                       style: TextStyle(color: AppColors.textSecondary)),
                 )
               : Stack(
@@ -147,11 +154,12 @@ class _DetailScreenState extends State<DetailScreen> {
                           : _movieDetail!.thumbUrl,
                     ),
                     ListView(
-                      padding: const EdgeInsets.fromLTRB(20, 70, 20, 30),
+                      padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
                       children: [
                         DetailHeaderInfo(
                           detail: _movieDetail!,
                           isBookmarked: _isBookmarked,
+                          playButtonFocusNode: _playButtonFocusNode,
                           onBookmarkTap: () {
                             setState(() => _isBookmarked = !_isBookmarked);
                           },

@@ -3,17 +3,19 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
 import '../focus/tv_focusable_wrapper.dart';
 
-/// Primary "Xem Ngay" button with Cyan styling
+/// Primary "Xem Ngay" button with Cyan styling & optional FocusNode
 class PrimaryPlayButton extends StatelessWidget {
   final VoidCallback onTap;
   final String label;
   final bool autoFocus;
+  final FocusNode? focusNode;
 
   const PrimaryPlayButton({
     super.key,
     required this.onTap,
     this.label = 'XEM NGAY',
     this.autoFocus = false,
+    this.focusNode,
   });
 
   @override
@@ -21,6 +23,7 @@ class PrimaryPlayButton extends StatelessWidget {
     return TvFocusableWrapper(
       onTap: onTap,
       autoFocus: autoFocus,
+      focusNode: focusNode,
       borderRadius: 8,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
