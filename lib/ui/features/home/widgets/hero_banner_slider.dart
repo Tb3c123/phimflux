@@ -5,7 +5,7 @@ import '../../../../data/models/movie_summary.dart';
 import 'hero_backdrop_image.dart';
 import 'hero_title_info.dart';
 
-/// Interactive Multi-Movie Hero Banner Slider with auto-scroll & page dots
+/// Interactive Multi-Movie Hero Banner Slider optimized for Smart TV & Mobile
 class HeroBannerSlider extends StatefulWidget {
   final List<MovieSummary> movies;
   final ValueChanged<MovieSummary> onMovieTap;
@@ -57,7 +57,7 @@ class _HeroBannerSliderState extends State<HeroBannerSlider> {
     if (widget.movies.isEmpty) return const SizedBox.shrink();
 
     return SizedBox(
-      height: 520,
+      height: 360,
       child: Stack(
         children: [
           PageView.builder(
@@ -73,7 +73,7 @@ class _HeroBannerSliderState extends State<HeroBannerSlider> {
                   HeroBackdropImage(imageUrl: movie.posterUrl),
                   Positioned(
                     left: 32,
-                    bottom: 48,
+                    bottom: 24,
                     right: 32,
                     child: HeroTitleInfo(
                       title: movie.name,
@@ -90,7 +90,7 @@ class _HeroBannerSliderState extends State<HeroBannerSlider> {
           // Page Indicator Dots
           Positioned(
             right: 32,
-            bottom: 24,
+            bottom: 16,
             child: Row(
               children: List.generate(
                 widget.movies.length,
