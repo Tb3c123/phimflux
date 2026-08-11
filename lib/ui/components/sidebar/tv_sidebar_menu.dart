@@ -93,6 +93,7 @@ class _TvSidebarMenuState extends State<TvSidebarMenu> {
                       label: item['label'] as String,
                       isSelected: widget.selectedIndex == index,
                       isExpanded: _isExpanded,
+                      autoFocus: index == 0,
                       onTap: () => widget.onItemSelected(index),
                     );
                   },

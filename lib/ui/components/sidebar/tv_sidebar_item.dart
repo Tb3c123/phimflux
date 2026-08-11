@@ -9,6 +9,7 @@ class TvSidebarItem extends StatelessWidget {
   final String label;
   final bool isSelected;
   final bool isExpanded;
+  final bool autoFocus;
   final VoidCallback onTap;
 
   const TvSidebarItem({
@@ -17,6 +18,7 @@ class TvSidebarItem extends StatelessWidget {
     required this.label,
     required this.isSelected,
     required this.isExpanded,
+    this.autoFocus = false,
     required this.onTap,
   });
 
@@ -26,6 +28,7 @@ class TvSidebarItem extends StatelessWidget {
 
     return TvFocusableWrapper(
       onTap: onTap,
+      autoFocus: autoFocus,
       borderRadius: 8,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),

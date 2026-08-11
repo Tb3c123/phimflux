@@ -10,6 +10,7 @@ class TvFocusableWrapper extends StatefulWidget {
   final ValueChanged<bool>? onFocusChanged;
   final bool autoFocus;
   final double borderRadius;
+  final FocusNode? focusNode;
 
   const TvFocusableWrapper({
     super.key,
@@ -18,6 +19,7 @@ class TvFocusableWrapper extends StatefulWidget {
     this.onFocusChanged,
     this.autoFocus = false,
     this.borderRadius = 12.0,
+    this.focusNode,
   });
 
   @override
@@ -25,33 +27,51 @@ class TvFocusableWrapper extends StatefulWidget {
 }
 
 class _TvFocusableWrapperState extends State<TvFocusableWrapper> {
+  late FocusNode _focusNode;
   bool _isFocused = false;
 
-  void _handleFocusChange(bool focused) {
-    setState(() => _isFocused = focused);
-    if (focused) {
-      // Auto scroll viewport when TV Remote D-Pad focuses this element
-      Scrollable.ensureVisible(
-        context,
-        alignment: 0.2,
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.easeInOut,
-      );
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = widget.focusNode ?? FocusNode();
+    _focusNode.addListener(_onFocusListener);
+  }
+
+  @override
+  void dispose() {
+    if (widget.focusNode == null) {
+      _focusNode.dispose();
+    } else {
+      _focusNode.removeListener(_onFocusListener);
     }
-    if (widget.onFocusChanged != null) {
-      widget.onFocusChanged!(focused);
+    super.dispose();
+  }
+
+  void _onFocusListener() {
+    if (_focusNode.hasFocus != _isFocused) {
+      setState(() => _isFocused = _focusNode.hasFocus);
+      if (_focusNode.hasFocus) {
+        Scrollable.ensureVisible(
+          context,
+          alignment: 0.2,
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeInOut,
+        );
+      }
+      if (widget.onFocusChanged != null) {
+        widget.onFocusChanged!(_focusNode.hasFocus);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Focus(
+      focusNode: _focusNode,
       autofocus: widget.autoFocus,
-      onFocusChange: _handleFocusChange,
       onKeyEvent: (node, event) {
         if (event is KeyDownEvent) {
           final key = event.logicalKey;
-          // Support all Android TV Remote D-Pad Center / OK keys (0x00070058 is DPAD_CENTER / Select)
           if (key == LogicalKeyboardKey.select ||
               key == LogicalKeyboardKey.enter ||
               key == LogicalKeyboardKey.numpadEnter ||
