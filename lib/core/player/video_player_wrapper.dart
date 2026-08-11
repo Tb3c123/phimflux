@@ -2,10 +2,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_android/webview_flutter_android.dart';
 import '../theme/app_colors.dart';
 import 'web_iframe/web_iframe_helper.dart';
 
-/// Core Video Player wrapper supporting Web HTML iframe & Native WebView/ExoPlayer stream playback
+/// Core Video Player wrapper supporting Web HTML iframe & Android Native WebView/ExoPlayer stream playback
 class VideoPlayerWrapper extends StatefulWidget {
   final String videoUrl;
   final String? embedUrl;
@@ -50,23 +51,45 @@ class _VideoPlayerWrapperState extends State<VideoPlayerWrapper> {
 
   void _initWebViewPlayer(String url) {
     setState(() => _useWebView = true);
-    _webViewController = WebViewController()
+    
+    final controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(Colors.black)
+      ..setUserAgent('Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36')
       ..setNavigationDelegate(
         NavigationDelegate(
           onWebResourceError: (error) {
-            debugPrint('WebView Error: ${error.description}');
+            debugPrint('WebView Resource Error: ${error.description}');
           },
         ),
-      )
-      ..loadRequest(Uri.parse(url));
+      );
+
+    if (controller.platform is AndroidWebViewController) {
+      final androidController = controller.platform as AndroidWebViewController;
+      androidController.setMediaPlaybackRequiresUserGesture(false);
+    }
+
+    controller.loadRequest(
+      Uri.parse(url),
+      headers: const {
+        'Referer': 'https://nguonc.com/',
+        'User-Agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36',
+      },
+    );
+
+    _webViewController = controller;
   }
 
   Future<void> _initNativePlayer() async {
     try {
       final uri = Uri.parse(widget.videoUrl);
-      _controller = VideoPlayerController.networkUrl(uri);
+      _controller = VideoPlayerController.networkUrl(
+        uri,
+        httpHeaders: const {
+          'Referer': 'https://nguonc.com/',
+          'User-Agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36',
+        },
+      );
       await _controller!.initialize();
       if (widget.autoPlay) {
         await _controller!.play();
@@ -76,6 +99,7 @@ class _VideoPlayerWrapperState extends State<VideoPlayerWrapper> {
       }
       if (mounted) setState(() {});
     } catch (e) {
+      debugPrint('Native Player Error: $e. Falling back to WebView.');
       final activeUrl = (widget.embedUrl != null && widget.embedUrl!.isNotEmpty)
           ? widget.embedUrl!
           : widget.videoUrl;
@@ -115,10 +139,32 @@ class _VideoPlayerWrapperState extends State<VideoPlayerWrapper> {
     if (_hasError) {
       return Container(
         color: Colors.black,
-        child: const Center(
-          child: Text(
-            'Không thể phát luồng video này',
-            style: TextStyle(color: AppColors.textSecondary),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error_outline_rounded, color: Colors.redAccent, size: 48),
+              const SizedBox(height: 12),
+              const Text(
+                'Không thể phát luồng video này',
+                style: TextStyle(color: AppColors.textPrimary, fontSize: 16),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: () {
+                  final activeUrl = (widget.embedUrl != null && widget.embedUrl!.isNotEmpty)
+                      ? widget.embedUrl!
+                      : widget.videoUrl;
+                  _initWebViewPlayer(activeUrl);
+                },
+                icon: const Icon(Icons.refresh_rounded),
+                label: const Text('Thử Lại Trình Phát'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryFocusGlow,
+                  foregroundColor: Colors.black,
+                ),
+              ),
+            ],
           ),
         ),
       );
