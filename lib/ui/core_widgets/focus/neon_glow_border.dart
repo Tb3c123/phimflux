@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 
-/// Container that applies a Neon Cyan glow and border when focused
+/// Container that applies a Neon Cyan glow and border when focused (blurRadius 18)
 class NeonGlowBorder extends StatelessWidget {
   final Widget child;
   final bool isFocused;
@@ -28,7 +28,7 @@ class NeonGlowBorder extends StatelessWidget {
             ? [
                 BoxShadow(
                   color: AppColors.primaryFocusGlow.withOpacity(0.6),
-                  blurRadius: 16,
+                  blurRadius: 18,
                   spreadRadius: 2,
                 ),
               ]

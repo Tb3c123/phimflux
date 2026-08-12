@@ -1,13 +1,15 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../ui/core_widgets/focus/focus_scale_wrapper.dart';
 import '../../ui/core_widgets/focus/neon_glow_border.dart';
 
-/// Universal Hybrid Focusable Widget for Remote TV D-Pad, Web Keyboard, and Mouse Hover
+/// Universal Hybrid Focusable Widget for Remote TV D-Pad, Web Keyboard, and Mouse Hover with Dwell Debounce
 class TvFocusable extends StatefulWidget {
   final Widget child;
   final VoidCallback? onTap;
   final ValueChanged<bool>? onFocusChanged;
+  final VoidCallback? onFocusDwell;
   final FocusOnKeyEventCallback? onKeyEvent;
   final bool autoFocus;
   final double borderRadius;
@@ -18,6 +20,7 @@ class TvFocusable extends StatefulWidget {
     required this.child,
     this.onTap,
     this.onFocusChanged,
+    this.onFocusDwell,
     this.onKeyEvent,
     this.autoFocus = false,
     this.borderRadius = 12.0,
@@ -32,6 +35,7 @@ class _TvFocusableState extends State<TvFocusable> {
   late FocusNode _focusNode;
   bool _isFocused = false;
   bool _isHovered = false;
+  Timer? _dwellTimer;
 
   @override
   void initState() {
@@ -42,6 +46,7 @@ class _TvFocusableState extends State<TvFocusable> {
 
   @override
   void dispose() {
+    _dwellTimer?.cancel();
     if (widget.focusNode == null) {
       _focusNode.dispose();
     } else {
@@ -51,6 +56,7 @@ class _TvFocusableState extends State<TvFocusable> {
   }
 
   void _onFocusListener() {
+    _dwellTimer?.cancel();
     if (_focusNode.hasFocus != _isFocused) {
       setState(() => _isFocused = _focusNode.hasFocus);
       if (_focusNode.hasFocus && mounted) {
@@ -66,6 +72,14 @@ class _TvFocusableState extends State<TvFocusable> {
             } catch (_) {}
           }
         });
+
+        if (widget.onFocusDwell != null) {
+          _dwellTimer = Timer(const Duration(seconds: 1), () {
+            if (mounted && _focusNode.hasFocus) {
+              widget.onFocusDwell!();
+            }
+          });
+        }
       }
       if (widget.onFocusChanged != null) {
         widget.onFocusChanged!(_focusNode.hasFocus);

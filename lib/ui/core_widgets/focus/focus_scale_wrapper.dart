@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Applies a 1.05x scale factor animation when focused
+/// Applies a 1.08x scale factor animation when focused
 class FocusScaleWrapper extends StatelessWidget {
   final Widget child;
   final bool isFocused;
@@ -10,7 +10,7 @@ class FocusScaleWrapper extends StatelessWidget {
     super.key,
     required this.child,
     required this.isFocused,
-    this.scaleFactor = 1.05,
+    this.scaleFactor = 1.08,
   });
 
   @override
