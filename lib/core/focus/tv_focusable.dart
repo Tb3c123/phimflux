@@ -8,6 +8,7 @@ class TvFocusable extends StatefulWidget {
   final Widget child;
   final VoidCallback? onTap;
   final ValueChanged<bool>? onFocusChanged;
+  final FocusOnKeyEventCallback? onKeyEvent;
   final bool autoFocus;
   final double borderRadius;
   final FocusNode? focusNode;
@@ -17,6 +18,7 @@ class TvFocusable extends StatefulWidget {
     required this.child,
     this.onTap,
     this.onFocusChanged,
+    this.onKeyEvent,
     this.autoFocus = false,
     this.borderRadius = 12.0,
     this.focusNode,
@@ -52,14 +54,18 @@ class _TvFocusableState extends State<TvFocusable> {
     if (_focusNode.hasFocus != _isFocused) {
       setState(() => _isFocused = _focusNode.hasFocus);
       if (_focusNode.hasFocus && mounted) {
-        try {
-          Scrollable.ensureVisible(
-            context,
-            alignment: 0.2,
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeInOut,
-          );
-        } catch (_) {}
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted && _focusNode.hasFocus) {
+            try {
+              Scrollable.ensureVisible(
+                context,
+                alignment: 0.5,
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeInOut,
+              );
+            } catch (_) {}
+          }
+        });
       }
       if (widget.onFocusChanged != null) {
         widget.onFocusChanged!(_focusNode.hasFocus);
@@ -75,6 +81,12 @@ class _TvFocusableState extends State<TvFocusable> {
       focusNode: _focusNode,
       autofocus: widget.autoFocus,
       onKeyEvent: (node, event) {
+        if (widget.onKeyEvent != null) {
+          final customResult = widget.onKeyEvent!(node, event);
+          if (customResult == KeyEventResult.handled) {
+            return KeyEventResult.handled;
+          }
+        }
         if (event is KeyDownEvent) {
           final key = event.logicalKey;
           if (key == LogicalKeyboardKey.select ||

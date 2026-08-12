@@ -13,6 +13,7 @@ class FocusableMovieCard extends StatelessWidget {
   final String quality;
   final String language;
   final VoidCallback onTap;
+  final FocusOnKeyEventCallback? onKeyEvent;
   final double? width;
 
   const FocusableMovieCard({
@@ -22,6 +23,7 @@ class FocusableMovieCard extends StatelessWidget {
     this.quality = '',
     this.language = '',
     required this.onTap,
+    this.onKeyEvent,
     this.width,
   });
 
@@ -29,6 +31,7 @@ class FocusableMovieCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return TvFocusable(
       onTap: onTap,
+      onKeyEvent: onKeyEvent,
       borderRadius: 8,
       child: Container(
         width: width,

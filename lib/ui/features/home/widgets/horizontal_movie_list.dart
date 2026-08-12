@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import '../../../../core/focus/tv_focus_engine.dart';
 import '../../../../data/models/movie_summary.dart';
 import '../../../core_widgets/cards/focusable_movie_card.dart';
 import '../../../core_widgets/cards/skeleton_card.dart';
 import 'horizontal_section_header.dart';
 
-/// Horizontal scrolling row of standardized movie cards with 2D spatial focus policy
+/// Horizontal scrolling row of standardized movie cards with Left Edge Escape & 2D Spatial Focus Policy
 class HorizontalMovieList extends StatelessWidget {
   final String title;
   final List<MovieSummary> movies;
@@ -51,6 +53,16 @@ class HorizontalMovieList extends StatelessWidget {
                         quality: movie.quality,
                         language: movie.language,
                         onTap: () => onMovieTap(movie),
+                        onKeyEvent: index == 0
+                            ? (node, event) {
+                                if (event is KeyDownEvent &&
+                                    event.logicalKey == LogicalKeyboardKey.arrowLeft) {
+                                  TvFocusEngine().focusSidebar();
+                                  return KeyEventResult.handled;
+                                }
+                                return KeyEventResult.ignored;
+                              }
+                            : null,
                       );
                     },
                   ),

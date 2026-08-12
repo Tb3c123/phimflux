@@ -3,12 +3,13 @@ import '../../../core/focus/tv_focusable.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
 
-/// Primary "Xem Ngay" button with Cyan styling & optional FocusNode
+/// Primary "Xem Ngay" button with Cyan styling & optional FocusNode / key handler
 class PrimaryPlayButton extends StatelessWidget {
   final VoidCallback onTap;
   final String label;
   final bool autoFocus;
   final FocusNode? focusNode;
+  final FocusOnKeyEventCallback? onKeyEvent;
 
   const PrimaryPlayButton({
     super.key,
@@ -16,6 +17,7 @@ class PrimaryPlayButton extends StatelessWidget {
     this.label = 'XEM NGAY',
     this.autoFocus = false,
     this.focusNode,
+    this.onKeyEvent,
   });
 
   @override
@@ -24,6 +26,7 @@ class PrimaryPlayButton extends StatelessWidget {
       onTap: onTap,
       autoFocus: autoFocus,
       focusNode: focusNode,
+      onKeyEvent: onKeyEvent,
       borderRadius: 8,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),

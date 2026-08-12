@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import '../../../core/focus/tv_focus_engine.dart';
 import '../../../core/focus/tv_focusable.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
 
-/// Single item component inside TV Sidebar Menu
+/// Single item component inside TV Sidebar Menu with ArrowRight jump to main content
 class TvSidebarItem extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -30,6 +32,13 @@ class TvSidebarItem extends StatelessWidget {
       onTap: onTap,
       autoFocus: autoFocus,
       borderRadius: 8,
+      onKeyEvent: (node, event) {
+        if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.arrowRight) {
+          TvFocusEngine().focusMainArea();
+          return KeyEventResult.handled;
+        }
+        return KeyEventResult.ignored;
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         child: Row(

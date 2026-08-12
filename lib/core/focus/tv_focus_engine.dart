@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Central Focus Engine managing FocusScopeNodes for TV Sidebar & Main Content Area
+/// Central Focus Engine managing FocusScopeNodes & Left-Edge Escape for Smart TV Navigation
 class TvFocusEngine {
   static final TvFocusEngine _instance = TvFocusEngine._internal();
   factory TvFocusEngine() => _instance;
