@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import '../../../../core/focus/tv_focusable.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
-import '../../../core_widgets/focus/tv_focusable_wrapper.dart';
 
-/// Compact Episode button widget saving vertical screen space
+/// Compact Episode button widget saving vertical screen space with TvFocusable integration
 class EpisodeButton extends StatelessWidget {
   final String episodeName;
   final bool isSelected;
@@ -18,7 +18,7 @@ class EpisodeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TvFocusableWrapper(
+    return TvFocusable(
       onTap: onTap,
       borderRadius: 6,
       child: Container(

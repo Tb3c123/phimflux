@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import '../../../../core/focus/tv_focusable.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
-import '../../../core_widgets/focus/tv_focusable_wrapper.dart';
 
 /// Server tab selection button (e.g. Vietsub / Thuyết Minh)
 class ServerTabButton extends StatelessWidget {
@@ -18,7 +18,7 @@ class ServerTabButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TvFocusableWrapper(
+    return TvFocusable(
       onTap: onTap,
       borderRadius: 16,
       child: Container(

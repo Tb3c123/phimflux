@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../core/focus/tv_focusable.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../core_widgets/focus/tv_focusable_wrapper.dart';
 
 /// Top application bar displaying Brand Logo asset & TV-friendly Search button
 class CustomAppBar extends StatelessWidget {
@@ -54,7 +54,7 @@ class CustomAppBar extends StatelessWidget {
             ),
           ),
           if (onSearchSubmit != null)
-            TvFocusableWrapper(
+            TvFocusable(
               onTap: () => onSearchSubmit!(''),
               borderRadius: 20,
               child: Container(

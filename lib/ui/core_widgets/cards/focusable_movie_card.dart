@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import '../../../core/focus/tv_focusable.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
 import '../badges/language_tag_badge.dart';
 import '../badges/quality_tag_badge.dart';
-import '../focus/tv_focusable_wrapper.dart';
 import 'movie_poster_image.dart';
 
 /// Standardized Compact Movie Card with AspectRatio poster, title & bottom action button
@@ -27,7 +27,7 @@ class FocusableMovieCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TvFocusableWrapper(
+    return TvFocusable(
       onTap: onTap,
       borderRadius: 8,
       child: Container(

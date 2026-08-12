@@ -4,7 +4,7 @@ import '../../../core_widgets/cards/focusable_movie_card.dart';
 import '../../../core_widgets/cards/skeleton_card.dart';
 import 'horizontal_section_header.dart';
 
-/// Horizontal scrolling row of standardized movie cards (Height 290 for 0-overflow)
+/// Horizontal scrolling row of standardized movie cards with 2D spatial focus policy
 class HorizontalMovieList extends StatelessWidget {
   final String title;
   final List<MovieSummary> movies;
@@ -26,7 +26,7 @@ class HorizontalMovieList extends StatelessWidget {
       children: [
         HorizontalSectionHeader(title: title),
         FocusTraversalGroup(
-          policy: WidgetOrderTraversalPolicy(),
+          policy: ReadingOrderTraversalPolicy(),
           child: SizedBox(
             height: 290,
             child: isLoading

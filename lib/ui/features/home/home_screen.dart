@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import '../../../core/focus/tv_focus_engine.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../data/models/movie_summary.dart';
 import '../../../data/repositories/movie_repository.dart';
 import 'widgets/hero_banner_slider.dart';
 import 'widgets/horizontal_movie_list.dart';
 
-/// Full Home Screen with multi-movie Hero Banner Slider & non-overlapping lists
+/// Full Home Screen with multi-movie Hero Banner Slider & TvFocusEngine integration
 class HomeScreen extends StatefulWidget {
   final MovieRepository repository;
   final ValueChanged<MovieSummary> onMovieSelect;
@@ -96,38 +97,41 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
 
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (_bannerMovies.isNotEmpty)
-            HeroBannerSlider(
-              movies: _bannerMovies,
+    return FocusScope(
+      node: TvFocusEngine().mainAreaScope,
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (_bannerMovies.isNotEmpty)
+              HeroBannerSlider(
+                movies: _bannerMovies,
+                onMovieTap: widget.onMovieSelect,
+              ),
+            const SizedBox(height: 16),
+            HorizontalMovieList(
+              title: '🔥 Phim Mới Cập Nhật',
+              movies: _latestMovies,
+              isLoading: false,
               onMovieTap: widget.onMovieSelect,
             ),
-          const SizedBox(height: 16),
-          HorizontalMovieList(
-            title: '🔥 Phim Mới Cập Nhật',
-            movies: _latestMovies,
-            isLoading: false,
-            onMovieTap: widget.onMovieSelect,
-          ),
-          const SizedBox(height: 16),
-          HorizontalMovieList(
-            title: '🎬 Phim Lẻ Đặc Sắc',
-            movies: _singleMovies,
-            isLoading: false,
-            onMovieTap: widget.onMovieSelect,
-          ),
-          const SizedBox(height: 16),
-          HorizontalMovieList(
-            title: '📺 Phim Bộ Nổi Bật',
-            movies: _seriesMovies,
-            isLoading: false,
-            onMovieTap: widget.onMovieSelect,
-          ),
-          const SizedBox(height: 32),
-        ],
+            const SizedBox(height: 16),
+            HorizontalMovieList(
+              title: '🎬 Phim Lẻ Đặc Sắc',
+              movies: _singleMovies,
+              isLoading: false,
+              onMovieTap: widget.onMovieSelect,
+            ),
+            const SizedBox(height: 16),
+            HorizontalMovieList(
+              title: '📺 Phim Bộ Nổi Bật',
+              movies: _seriesMovies,
+              isLoading: false,
+              onMovieTap: widget.onMovieSelect,
+            ),
+            const SizedBox(height: 32),
+          ],
+        ),
       ),
     );
   }

@@ -125,11 +125,11 @@ class _MainNavigationFrameState extends State<MainNavigationFrame> {
       );
     }
 
-    // 3. Main Navigation Layout with FocusTraversalGroup for D-Pad focus switching
+    // 3. Main Navigation Layout with 2D Spatial Focus Policy
     return Scaffold(
       backgroundColor: AppColors.darkBackground,
       body: FocusTraversalGroup(
-        policy: WidgetOrderTraversalPolicy(),
+        policy: ReadingOrderTraversalPolicy(),
         child: Row(
           children: [
             TvSidebarMenu(

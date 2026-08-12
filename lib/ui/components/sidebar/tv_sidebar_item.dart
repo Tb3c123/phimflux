@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import '../../../core/focus/tv_focusable.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
-import '../../core_widgets/focus/tv_focusable_wrapper.dart';
 
 /// Single item component inside TV Sidebar Menu
 class TvSidebarItem extends StatelessWidget {
@@ -26,7 +26,7 @@ class TvSidebarItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final activeColor = isSelected ? AppColors.primaryFocusGlow : AppColors.textSecondary;
 
-    return TvFocusableWrapper(
+    return TvFocusable(
       onTap: onTap,
       autoFocus: autoFocus,
       borderRadius: 8,

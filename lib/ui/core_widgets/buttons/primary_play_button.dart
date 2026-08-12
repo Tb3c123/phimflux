@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import '../../../core/focus/tv_focusable.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
-import '../focus/tv_focusable_wrapper.dart';
 
 /// Primary "Xem Ngay" button with Cyan styling & optional FocusNode
 class PrimaryPlayButton extends StatelessWidget {
@@ -20,7 +20,7 @@ class PrimaryPlayButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TvFocusableWrapper(
+    return TvFocusable(
       onTap: onTap,
       autoFocus: autoFocus,
       focusNode: focusNode,

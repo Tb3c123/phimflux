@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import '../../../core/focus/tv_focusable.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
-import '../focus/tv_focusable_wrapper.dart';
 
 /// Secondary action button (e.g. "Thêm Tủ Phim", "Chia sẻ")
 class SecondaryActionButton extends StatelessWidget {
@@ -18,7 +18,7 @@ class SecondaryActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TvFocusableWrapper(
+    return TvFocusable(
       onTap: onTap,
       borderRadius: 8,
       child: Container(
